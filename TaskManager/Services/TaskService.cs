@@ -10,18 +10,21 @@ namespace TaskManager.Services
 {
     public class TaskService : ITaskService
     {
-        public List<TaskItem> tasks = new List<TaskItem>();
-        public void AddTask(TaskItem task)
+        List<TaskItem> tasks = new List<TaskItem>();
+        public bool AddTask(TaskItem task)
         {
-            tasks.Add(task);
-            Console.WriteLine(task.Title + "Added successfully.");
+            if (task != null)
+            {
+                tasks.Add(task);
+                return true;
+            }
+            return false;
         }
 
-        public void DeleteTask(int id)
+        public bool DeleteTask(int id)
         {
-            TaskItem searchedTask=tasks.FirstOrDefault(t=>t.Id==id);
-            tasks.Remove(searchedTask);
-            Console.WriteLine(searchedTask.Title + "Deleted successfully.");
+            TaskItem searchedTask = tasks.FirstOrDefault(t => t.Id == id);
+            return tasks.Remove(searchedTask);
         }
 
         public List<TaskItem> GetAllTasks()
@@ -29,21 +32,30 @@ namespace TaskManager.Services
             return tasks;
         }
 
-        public void MarkCompleted(int id)
+        public bool MarkCompleted(int id)
         {
             TaskItem searchedTask = tasks.FirstOrDefault(t => t.Id == id);
-            searchedTask.IsCompleted = true;
-            Console.WriteLine(searchedTask.Title + "Completed successfully.");
+            if (searchedTask != null)
+            {
+                searchedTask.IsCompleted = true;
+                return true;
+            }
+            return false;
         }
 
-        public void UpdateTask(int id, string newTitle)
+        public bool UpdateTask(int id, string newTitle)
         {
             TaskItem searchedTask = tasks.FirstOrDefault(t => t.Id == id);
-            searchedTask.Title = newTitle;
-            Console.WriteLine(searchedTask.Title + "Updated successfully.");
+            if (searchedTask != null)
+            {
+                searchedTask.Title = newTitle;
+                return true;
+            }
+            return false;
         }
 
-        public TaskItem GetTaskById(int id) {
+        public TaskItem GetTaskById(int id)
+        {
             TaskItem searchedTask = tasks.FirstOrDefault(t => t.Id == id);
             return searchedTask;
         }

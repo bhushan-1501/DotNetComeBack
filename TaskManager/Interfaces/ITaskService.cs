@@ -9,11 +9,11 @@ namespace TaskManager.Interfaces
 {
     internal interface ITaskService
     {
-        void AddTask(TaskItem task);
+        bool AddTask(TaskItem task);
         List<TaskItem> GetAllTasks();
-        void DeleteTask(int id);
-        void MarkCompleted(int id);
-        void UpdateTask(int id, string newTitle);
+        bool DeleteTask(int id);
+        bool MarkCompleted(int id);
+        bool UpdateTask(int id, string newTitle);
 
     }
 }

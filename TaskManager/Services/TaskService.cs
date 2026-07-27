@@ -3,61 +3,76 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManager.CustomExceptions;
 using TaskManager.Interfaces;
 using TaskManager.Models;
+using TaskManager.Models.SeededData;
 
 namespace TaskManager.Services
 {
     public class TaskService : ITaskService
     {
-        List<TaskItem> tasks = new List<TaskItem>();
+
         public bool AddTask(TaskItem task)
         {
             if (task != null)
             {
-                tasks.Add(task);
+                Data.predefinedTasks.Add(task);
                 return true;
             }
-            return false;
+            throw new TaskNotFoundException("Task Not Found");
         }
+
 
         public bool DeleteTask(int id)
         {
-            TaskItem searchedTask = tasks.FirstOrDefault(t => t.Id == id);
-            return tasks.Remove(searchedTask);
+            TaskItem searchedTask = Data.predefinedTasks.FirstOrDefault(t => t.Id == id);
+            if (searchedTask != null)
+                return Data.predefinedTasks.Remove(searchedTask);
+            else
+                throw new TaskNotFoundException("Task Not Found");
         }
 
-        public List<TaskItem> GetAllTasks()
+        public async Task<List<TaskItem>> GetAllTasks()
         {
-            return tasks;
+            await Task.Delay(1000);
+            return Data.predefinedTasks;
         }
 
         public bool MarkCompleted(int id)
         {
-            TaskItem searchedTask = tasks.FirstOrDefault(t => t.Id == id);
+            TaskItem searchedTask = Data.predefinedTasks.FirstOrDefault(t => t.Id == id);
             if (searchedTask != null)
             {
                 searchedTask.IsCompleted = true;
                 return true;
             }
-            return false;
+            throw new TaskNotFoundException("Task Not Found");
         }
 
         public bool UpdateTask(int id, string newTitle)
         {
-            TaskItem searchedTask = tasks.FirstOrDefault(t => t.Id == id);
+            TaskItem searchedTask = Data.predefinedTasks.FirstOrDefault(t => t.Id == id);
             if (searchedTask != null)
             {
                 searchedTask.Title = newTitle;
                 return true;
             }
-            return false;
+            throw new TaskNotFoundException("Task Not Found");
         }
 
         public TaskItem GetTaskById(int id)
         {
-            TaskItem searchedTask = tasks.FirstOrDefault(t => t.Id == id);
-            return searchedTask;
+            TaskItem searchedTask = Data.predefinedTasks.FirstOrDefault(t => t.Id == id);
+            if (searchedTask != null)
+                return searchedTask;
+            else
+                throw new TaskNotFoundException("Task Not Found");
+        }
+
+        public List<TaskItem> FilterdTasks(Predicate<TaskItem> predicate)
+        {
+            return Data.predefinedTasks.FindAll(predicate);
         }
     }
 }

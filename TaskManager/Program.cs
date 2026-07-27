@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManager.CustomExceptions;
 using TaskManager.Interfaces;
 using TaskManager.Models;
 using TaskManager.Services;
@@ -12,13 +13,23 @@ namespace TaskManager
     internal class Program
     {
         static public ITaskService taskService = new TaskService();
-        static void Main(string[] args)
+
+        static void showTasks(List<TaskItem> t)
         {
+            Console.WriteLine("Task Id \t\t\t Title \t\t\t Status \t\t\t User Name \t\t\t User Id");
+            foreach (var task in t)
+            {
+                Console.WriteLine($"{task.Id} \t\t\t {task.Title} \t\t\t {task.IsCompleted} \t\t\t {task.AssignedUser.Name} \t\t\t {task.AssignedUser.Id}");
+            }
+        }
+        static async Task Main(string[] args)
+        {
+
             int choice = 0;
             int Id, userId;
             do
             {
-                Console.WriteLine("====================\r\n1 Add Task\r\n2 View Tasks\r\n3 Update Task\r\n4 Delete Task \r\n5 Mark Completed\r \n7 Exit\r\n====================");
+                Console.WriteLine("====================\nMain Menu\r\n\t1. Add Task\r\n\t2. View Tasks\r\n\t3. Update Task\r\n\t4. Delete Task \r\n\t5. Mark Completed\r\n\t6. Filter Tasks\r \n\t7. Exit\r\n====================");
                 choice = Convert.ToInt32(Console.ReadLine());
                 switch (choice)
                 {
@@ -31,28 +42,23 @@ namespace TaskManager
                         newTask.Title = Console.ReadLine();
                         newTask.Id = Convert.ToInt32(Console.ReadLine());
                         newTask.AssignedUser = newUser;
-                        if (taskService.AddTask(newTask))
+
+                        try
                         {
-                            Console.WriteLine(newTask.Title + " Added successfully.");
+                            if (taskService.AddTask(newTask))
+                                Console.WriteLine(newTask.Title + " Added successfully.");
                         }
-                        else
-                        {
-                            Console.WriteLine("Some Error occured");
-                        }
+                        catch (TaskNotFoundException e) { Console.WriteLine(e.Message); }
+                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
 
 
                         break;
 
                     case 2:
-                        List<TaskItem> retrivedList = taskService.GetAllTasks();
-                        if(retrivedList.Count > 0)
+                        List<TaskItem> retrivedList =await taskService.GetAllTasks();
+                        if (retrivedList.Count > 0)
                         {
-                        Console.WriteLine("Task Id \t Title \t Status \t User Name \t User Id");
-                        foreach (var task in retrivedList)
-                        {
-                            Console.WriteLine($"{task.Id} \t {task.Title} \t {task.IsCompleted} \t {task.AssignedUser.Name} \t {task.AssignedUser.Id}");
-                        }
-
+                            showTasks(retrivedList);
                         }
                         else
                         {
@@ -64,42 +70,63 @@ namespace TaskManager
                         Console.WriteLine("Details : Id | Title");
                         Id = Convert.ToInt32(Console.ReadLine());
                         string title = Console.ReadLine();
-                        if(taskService.UpdateTask(Id, title))
+                        try
                         {
-                            Console.WriteLine("Task Updated successfully.");
+                            if (taskService.UpdateTask(Id, title))
+                            {
+                                Console.WriteLine("Task Updated successfully.");
+                            }
                         }
-                        else
-                        {
-                            Console.WriteLine("Some Error Occured");
-                        }
+                        catch (TaskNotFoundException e) { Console.WriteLine(e.Message); }
+                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                         break;
                     case 4:
 
                         Console.WriteLine("Details : Id");
                         Id = Convert.ToInt32(Console.ReadLine());
-                        if (taskService.DeleteTask(Id))
+                        try
                         {
-                            Console.WriteLine("Task Deleted Successfully");
+                            if (taskService.DeleteTask(Id))
+                            {
+                                Console.WriteLine("Task Deleted Successfully");
+                            }
                         }
-                        else
-                        {
-                            Console.WriteLine("Some Error Occured");
-                        }
+                        catch (TaskNotFoundException e) { Console.WriteLine(e.Message); }
+                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                         break;
                     case 5:
                         Console.WriteLine("Details : Id");
                         Id = Convert.ToInt32(Console.ReadLine());
-                        if (taskService.MarkCompleted(Id))
+                        try
                         {
+                            if (taskService.MarkCompleted(Id))
+                            {
 
-                            Console.WriteLine("Task Completed successfully.");
+                                Console.WriteLine("Task Completed successfully.");
+                            }
                         }
-                        else
-                        {
-                            Console.WriteLine("Some Error Occured");
-                        }
+                        catch (TaskNotFoundException e) { Console.WriteLine(e.Message); }
+                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+
                         break;
 
+                    case 6:
+                        Console.WriteLine("Filter Choice : \n\t1.Completed \n\t2. Pending");
+                        int subChoice = Convert.ToInt32(Console.ReadLine());
+                        switch (subChoice)
+                        {
+                            case 1:
+                                showTasks(taskService.FilterdTasks(t => t.IsCompleted));
+                                break;
+                            case 2:
+                                showTasks(taskService.FilterdTasks(t => !t.IsCompleted));
+                                break;
+                        }
+                        break;
+                    case 7:
+                        Console.WriteLine("Thank You!!!!!");
+                        break;
+                    default: Console.WriteLine("Please Enter Valid Choice"); break;
                 }
             } while (choice != 7);
         }

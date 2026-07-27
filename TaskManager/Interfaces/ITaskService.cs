@@ -10,10 +10,13 @@ namespace TaskManager.Interfaces
     internal interface ITaskService
     {
         bool AddTask(TaskItem task);
-        List<TaskItem> GetAllTasks();
+        Task<List<TaskItem>> GetAllTasks();
         bool DeleteTask(int id);
         bool MarkCompleted(int id);
         bool UpdateTask(int id, string newTitle);
+        TaskItem GetTaskById(int id);
+        List<TaskItem> FilterdTasks(Predicate<TaskItem> predicate);
+        
 
     }
 }

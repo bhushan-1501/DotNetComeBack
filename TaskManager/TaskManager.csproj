@@ -43,8 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomExceptions\TaskNotFoundException.cs" />
     <Compile Include="Interfaces\ITaskService.cs" />
     <Compile Include="Models\Admin.cs" />
+    <Compile Include="Models\SeededData\Data.cs" />
     <Compile Include="Models\TaskItem.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />

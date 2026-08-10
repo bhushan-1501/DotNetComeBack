@@ -12,5 +12,6 @@ namespace TaskManager.Models
         public string Title { get; set; }
         public bool IsCompleted {  get; set; }
         public User AssignedUser {  get; set; }
+      
     }
 }

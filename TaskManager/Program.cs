@@ -7,6 +7,7 @@ using TaskManager.CustomExceptions;
 using TaskManager.Interfaces;
 using TaskManager.Models;
 using TaskManager.Services;
+using Microsoft.Data.SqlClient;
 
 namespace TaskManager
 {
@@ -27,6 +28,17 @@ namespace TaskManager
 
             int choice = 0;
             int Id, userId;
+           
+            //try
+            //{
+            //    conn.Open();
+            //    Console.WriteLine("Connected...");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+
             do
             {
                 Console.WriteLine("====================\nMain Menu\r\n\t1. Add Task\r\n\t2. View Tasks\r\n\t3. Update Task\r\n\t4. Delete Task \r\n\t5. Mark Completed\r\n\t6. Filter Tasks\r \n\t7. Exit\r\n====================");
